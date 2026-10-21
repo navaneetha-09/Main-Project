@@ -1,0 +1,31 @@
+pod_id,pod_name,location,total_cpu,used_cpu,total_gpu,used_gpu,total_ram_gb,used_ram_gb,status,base_power_kw,max_power_kw,pue,network_latency_ms,surface_area_m2,total_storage_gb,used_storage_gb
+POD-ORKNEY-01,Natick-Orkney-Alpha,Orkney Islands (UK),64,16,8,2,256,64,ACTIVE,18.5,85.0,1.06,12.4,115.0,2000,400
+POD-MONTEREY-02,PacifiVent-Monterey,Monterey Bay (USA),128,32,16,4,512,128,ACTIVE,25.0,120.0,1.08,8.2,145.0,4000,1200
+POD-AZORES-03,Abyssal-Azores-Beta,Azores Trench (Portugal),96,24,12,2,384,96,ACTIVE,22.0,105.0,1.05,24.6,130.0,3000,600
+POD-SVALBARD-04,CryoPod-Svalbard,Svalbard (Norway),128,20,16,2,512,80,ACTIVE,24.0,115.0,1.04,31.5,140.0,5000,1500
+POD-MEDITERR-05,MareNostrum-Pod,Mediterranean (Spain),64,48,8,6,256,192,ACTIVE,19.0,90.0,1.12,14.1,110.0,2000,1600
+POD-HAWAII-06,CoralGuard-Pod,Kona Shelf (Hawaii),64,12,8,2,256,48,ACTIVE,17.0,80.0,1.09,19.8,115.0,2000,500
+POD-NORTHSEA-07,Boreas-NorthSea,North Sea (Dogger Bank),64,8,8,0,256,32,MAINTENANCE,20.0,95.0,1.07,11.0,120.0,2000,200
+POD-BALTIC-08,BalticShield-Pod,Baltic Sea (Gotland),32,30,4,4,128,124,ACTIVE,15.0,70.0,1.1,16.5,95.0,1000,850
+POD-JAPAN-09,Kuroshio-Pod,Sagami Bay (Japan),96,28,12,4,384,112,ACTIVE,23.0,110.0,1.07,18.2,130.0,3000,900
+POD-CELTIC-10,CelticDeep-Titan,Celtic Deep (Ireland),128,32,16,4,512,128,ACTIVE,26.0,125.0,1.05,13.8,150.0,4000,900
+POD-CANARY-11,CanaryAbyss-Pod,Canary Basin (Spain),64,16,8,0,256,64,ACTIVE,19.0,90.0,1.07,21.2,115.0,2000,350
+POD-MIDATL-12,MidAtlantic-Vent,Mid-Atlantic Ridge (International),96,48,12,6,384,192,ACTIVE,24.0,110.0,1.06,35.0,135.0,3000,1200
+POD-SARGASSO-13,Bermuda-Sargasso,Sargasso Sea (Bermuda),64,20,8,2,256,80,ACTIVE,18.0,88.0,1.08,19.5,115.0,2000,500
+POD-LABRADOR-14,Labrador-DeepSea,Labrador Shelf (Canada),128,24,16,2,512,96,ACTIVE,25.0,120.0,1.04,22.0,145.0,4000,800
+POD-CASCADIA-15,Cascadia-SubVent,Cascadia Margin (Oregon USA),96,20,12,2,384,80,ACTIVE,21.0,102.0,1.06,11.5,130.0,3000,650
+POD-PUGET-16,PugetFjord-Pod,Puget Sound (Washington USA),64,16,8,1,256,64,ACTIVE,18.0,85.0,1.05,9.1,115.0,2000,400
+POD-MARIANA-17,MarianaChallenger,Mariana Trench (Guam),128,40,16,4,512,160,ACTIVE,28.0,130.0,1.04,42.0,155.0,5000,1400
+POD-TASMAN-18,TasmanAbyss-Pod,Tasman Sea (Australia),96,32,12,4,384,128,ACTIVE,22.0,105.0,1.07,28.4,130.0,3000,850
+POD-ALEUTIAN-19,AleutianTrench-Pod,Aleutian Arc (Alaska),64,12,8,1,256,48,ACTIVE,19.0,90.0,1.04,32.5,120.0,2500,450
+POD-CHILE-20,AtacamaTrench-Pod,Peru-Chile Trench (Chile),96,24,12,2,384,96,ACTIVE,22.0,105.0,1.05,34.0,130.0,3000,700
+POD-LOFOTEN-21,LofotenVortex-Pod,Lofoten Basin (Norway),96,16,12,2,384,64,ACTIVE,21.0,100.0,1.04,26.2,130.0,3500,500
+POD-BARENTS-22,BarentsGlacier-Pod,Barents Sea (Norway),128,16,16,0,512,64,ACTIVE,23.0,112.0,1.04,29.8,145.0,4000,600
+POD-GREENLAND-23,GreenlandShelf-Pod,Scoresby Sund (Greenland),64,8,8,0,256,32,ACTIVE,18.0,86.0,1.03,38.0,120.0,2000,300
+POD-LIGURIAN-24,LigurianSanctuary,Pelagos Sanctuary (Monaco),64,16,8,2,256,64,ACTIVE,18.0,85.0,1.11,15.3,115.0,2000,450
+POD-AEGEAN-25,CycladesDeep-Pod,Aegean Sea (Greece),48,12,6,1,192,48,ACTIVE,16.0,75.0,1.12,17.8,105.0,1500,350
+POD-BENGAL-26,GangesFan-Pod,Bay of Bengal (India),96,36,12,4,384,144,ACTIVE,23.0,108.0,1.1,21.5,135.0,3000,950
+POD-MALDIVES-27,MaldivesAtoll-Pod,Chagos Ridge (Maldives),64,16,8,2,256,64,ACTIVE,18.0,85.0,1.11,27.2,115.0,2000,400
+POD-MOZAMBIQUE-28,Mozambique-Pod,Mozambique Channel,64,24,8,3,256,96,ACTIVE,19.0,90.0,1.09,31.0,120.0,2000,600
+POD-KERGUELEN-29,KerguelenPlateau,Southern Ocean (Kerguelen),128,20,16,2,512,80,ACTIVE,24.0,115.0,1.04,45.0,145.0,4000,650
+POD-ROSS-30,RossSeaShelf-Pod,McMurdo Sound (Antarctica),128,16,16,1,512,64,ACTIVE,25.0,120.0,1.03,52.0,150.0,5000,500

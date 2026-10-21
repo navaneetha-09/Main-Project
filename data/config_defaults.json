@@ -1,0 +1,28 @@
+{
+  "weights": {
+    "energy": 0.15,
+    "carbon": 0.15,
+    "thermal_footprint": 0.30,
+    "environmental_risk": 0.30,
+    "performance_penalty": 0.10
+  },
+  "constraints": {
+    "max_water_temp_delta_c": 2.5,
+    "max_pod_temp_c": 45.0,
+    "max_environmental_risk_score": 0.65,
+    "max_carbon_budget_kg": 75.0,
+    "disallow_protected_zones": true
+  },
+  "validation": {
+    "max_stale_hours": 24.0,
+    "min_water_temp_c": -2.0,
+    "max_water_temp_c": 35.0,
+    "min_depth_m": 5.0
+  },
+  "model_parameters": {
+    "default_efficiency_loss": 0.92,
+    "convective_base_h": 450.0,
+    "velocity_exponent": 0.8,
+    "thermal_radius_m": 15.0
+  }
+}

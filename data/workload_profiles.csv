@@ -1,0 +1,31 @@
+workload_id,workload_type,cpu_cores,gpu_units,ram_gb,duration_hours,priority,description,storage_gb
+WL-001,Ocean Acoustic AI Inference,16,4,64,3.5,HIGH,"Real-time whale and marine mammal detection audio processing",120
+WL-002,Benthic Genomic Sequencing,32,8,128,8.0,HIGH,"Deep-sea hydrothermal vent extremophile genome assembly",500
+WL-003,Hydrodynamic Current Simulation,48,2,96,12.0,MEDIUM,"Subsea tidal eddy and turbulent kinetic energy simulation",300
+WL-004,Seismic Ocean Floor Imaging,64,8,256,6.0,HIGH,"High-resolution 3D subsea continental shelf seismic reconstruction",1000
+WL-005,Telemetry Batch Archival,8,0,32,2.0,LOW,"Compression and indexing of subsea sensor buoy telemetry",80
+WL-006,Coral Thermal Stress Modeling,24,4,64,5.0,MEDIUM,"Coral bleaching predictive thermodynamic simulation",200
+WL-007,Autonomous Submersible Vision,16,2,32,4.0,HIGH,"Computer vision pipeline for autonomous underwater vehicle navigation",150
+WL-008,Extreme High-Performance Workload,128,16,512,18.0,HIGH,"Exascale ocean-atmosphere coupled climate modeling",2000
+WL-009,Pelagic Deep Learning Classifier,32,8,128,6.0,HIGH,"Deep neural network classification of multi-spectral deep sea camera feeds",450
+WL-010,Benthic Sonar SLAM Mapping,24,4,64,5.0,HIGH,"Simultaneous localization and 3D bathymetric point cloud mapping",300
+WL-011,Bioluminescence Spectral Transformer,48,8,192,7.5,MEDIUM,"Transformer architecture analyzing photophore emission wavelength sequences",600
+WL-012,Deep-Sea Cable Fault AI Detector,32,4,96,3.0,HIGH,"Real-time optical time-domain reflectometry signal anomaly detection",250
+WL-013,Whale Migration Graph Neural Network,24,2,64,4.5,MEDIUM,"Dynamic spatial-temporal graph modeling of baleen whale migration corridors",180
+WL-014,Tsunami Wavefront Fast Inversion,64,12,256,2.5,HIGH,"Urgent computational inversion of benthic bottom pressure gauge wavefronts",800
+WL-015,Hydrothermal Microbiome Metagenomics,48,8,192,10.0,HIGH,"Assembly and metabolic pathway reconstruction of methanogenic vent microbes",750
+WL-016,Abyssal Structural Proteomics (AlphaFold),64,16,384,14.0,HIGH,"Deep-sea piezophilic extremophile protein quaternary structure folding",1200
+WL-017,Cold-Seep Enzyme Discovery,24,4,64,6.0,MEDIUM,"Enzymatic bioprospecting for cold-adapted lipases and esterases",200
+WL-018,Marine Sponge Bioactive Docking,32,6,128,8.5,HIGH,"High-throughput molecular docking of marine macrolides against oncology targets",400
+WL-019,Global Circumpolar Circulation Model,96,8,384,16.0,HIGH,"Eddy-resolving primitive equation Antarctic circumpolar current solver",1500
+WL-020,Carbon Sequestration Plume Dynamics,64,4,256,9.0,HIGH,"Multiphase Navier-Stokes modeling of dissolved CO2 benthic sequestration stability",900
+WL-021,Arctic Sea-Ice Albedo Loss Simulation,40,4,128,11.0,MEDIUM,"Thermodynamic simulation of marginal ice zone brine rejection and thermal decay",500
+WL-022,Microplastic Dispersion Hydrodynamics,32,2,96,7.0,MEDIUM,"Lagrangian particle tracking of oceanic microplastic gyre concentration",350
+WL-023,Multibeam Bathymetry 3D Volumetric Mesh,32,4,128,4.0,HIGH,"Photogrammetric fusion of multibeam swath and laser line scan datasets",800
+WL-024,Sub-Seafloor Fault Stress Inversion,48,8,192,8.0,HIGH,"Geomechanical viscoelastic stress accumulation modeling along tectonic boundaries",650
+WL-025,Gas Hydrate Reservoir Seismic Tomography,64,8,256,7.5,HIGH,"Full-waveform inversion of bottom-simulating reflections in methane hydrate zones",1100
+WL-026,Fiber Optic Repeater Log Analytics,16,0,48,3.0,LOW,"Automated parsing, clustering, and health telemetry analytics of transoceanic repeaters",150
+WL-027,Benthic Sediment Sensor Deduplication,8,0,32,1.5,LOW,"Filtering, calibrating, and deduplicating benthic geochemical porewater time-series",100
+WL-028,Autonomous Glider Telemetry Synthesis,16,1,48,3.5,MEDIUM,"Data fusion of conductivity-temperature-depth (CTD) undulating ocean gliders",120
+WL-029,Marine Sanctuary Soundscape Analysis,24,2,64,4.0,LOW,"Long-term passive acoustic spectral density index calculation in marine reserves",220
+WL-030,Subsea Power Grid Harmonic Filter,32,2,64,5.0,MEDIUM,"Real-time dynamic filtering and power factor correction of subsea umbilical cables",160
