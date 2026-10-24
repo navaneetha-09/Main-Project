@@ -105,12 +105,15 @@ class _MainShellState extends State<MainShell> {
     final taskId = "MISSION-${_taskCounter.toString().padLeft(4, '0')}";
     _taskCounter++;
 
+    final ambientTemp = (bestPod.localWaterTempC - bestPod.deltaTempC).clamp(0.0, 35.0);
     final newTask = ExecutionTask(
       taskId: taskId,
       workloadId: _selectedWorkload.id,
       workloadType: _selectedWorkload.type,
       assignedPodId: bestPod.podId,
       assignedPodName: bestPod.podName,
+      initialPodId: bestPod.podId,
+      initialPodName: bestPod.podName,
       status: "RUNNING",
       progressPct: 0.0,
       startTime: "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} UTC",
@@ -120,6 +123,23 @@ class _MainShellState extends State<MainShell> {
       durationHours: _selectedWorkload.durationHours,
       energyConsumedKwh: bestPod.energyKwh,
       carbonEmittedKg: bestPod.carbonKgCo2e,
+      currentWaterDeltaTempC: bestPod.deltaTempC,
+      currentPodTempC: bestPod.internalPodTempC,
+      ambientWaterTempC: ambientTemp,
+      currentConvectiveHWm2k: bestPod.convectiveHWm2k,
+      thermalFootprintScore: bestPod.normThermal,
+      environmentalRiskScore: bestPod.normRisk,
+      isThermalAlert: false,
+      telemetryHistory: [
+        TelemetryDataPoint(
+          timestamp: now,
+          deltaTempC: bestPod.deltaTempC,
+          internalPodTempC: bestPod.internalPodTempC,
+          ambientTempC: ambientTemp,
+          convectiveHWm2k: bestPod.convectiveHWm2k,
+          isThermalBreached: false,
+        ),
+      ],
       logs: [
         "[${now.toIso8601String()}] Workload ${_selectedWorkload.id} dispatched to ${bestPod.podName}.",
         "[${now.toIso8601String()}] Subsea hull convective cooling active (h = ${bestPod.convectiveHWm2k.toStringAsFixed(0)} W/m²K).",
@@ -211,6 +231,21 @@ class _MainShellState extends State<MainShell> {
       final task = _activeTasks.firstWhere((t) => t.taskId == taskId);
       task.progressPct = (task.progressPct + deltaPct).clamp(0.0, 100.0);
       final now = DateTime.now().toUtc();
+
+      // Telemetry update: slight natural fluctuation based on progress
+      final slightFluct = (math.sin(task.progressPct / 15.0) * 0.08);
+      final currentDelta = (task.currentWaterDeltaTempC + slightFluct).clamp(0.1, 4.0);
+      task.telemetryHistory.add(
+        TelemetryDataPoint(
+          timestamp: now,
+          deltaTempC: currentDelta,
+          internalPodTempC: task.currentPodTempC + (slightFluct * 1.5),
+          ambientTempC: task.ambientWaterTempC,
+          convectiveHWm2k: task.currentConvectiveHWm2k,
+          isThermalBreached: task.isThermalAlert,
+        ),
+      );
+
       if (task.progressPct >= 100.0) {
         task.status = "COMPLETED";
         task.completionTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} UTC";
@@ -219,6 +254,158 @@ class _MainShellState extends State<MainShell> {
         task.logs.add("[${now.toIso8601String()}] Execution checkpoint: ${task.progressPct.toInt()}% completed.");
       }
     });
+  }
+
+  void _triggerTaskThermalSpike(String taskId) {
+    setState(() {
+      final task = _activeTasks.firstWhere((t) => t.taskId == taskId);
+      final now = DateTime.now().toUtc();
+
+      task.currentWaterDeltaTempC = 2.88; // Exceeds 2.50°C budget limit!
+      task.currentPodTempC = 47.4; // Exceeds 45.0°C limit!
+      task.ambientWaterTempC += 4.5;
+      task.currentConvectiveHWm2k = 380.0;
+      task.thermalFootprintScore = 0.88;
+      task.environmentalRiskScore = 0.76;
+      task.isThermalAlert = true;
+      task.thermalAlertReason = "Seawater ΔT rise (+2.88°C) exceeds safety budget (2.50°C). Local ocean cooling boundary layer saturated.";
+
+      final wl = _workloads.firstWhere(
+        (w) => w.id == task.workloadId,
+        orElse: () => _selectedWorkload,
+      );
+
+      final targetPod = SchedulerEngine.findMigrationTarget(
+        workload: wl,
+        currentPodId: task.assignedPodId,
+        pods: _pods,
+        oceanConditions: _oceanConditions,
+        weights: _weights,
+        constraints: _constraints,
+      );
+
+      task.suggestedTargetPod = targetPod;
+
+      task.telemetryHistory.add(
+        TelemetryDataPoint(
+          timestamp: now,
+          deltaTempC: task.currentWaterDeltaTempC,
+          internalPodTempC: task.currentPodTempC,
+          ambientTempC: task.ambientWaterTempC,
+          convectiveHWm2k: task.currentConvectiveHWm2k,
+          isThermalBreached: true,
+        ),
+      );
+
+      task.logs.add("[${now.toIso8601String()}] 🚨 THERMAL ALERT: Seawater ΔT spiked to +2.88°C (Limit: 2.50°C). Internal temp: 47.4°C.");
+      if (targetPod != null) {
+        task.logs.add("[${now.toIso8601String()}] 🔍 Dynamic Migration Evaluator selected target: ${targetPod.podName} (${targetPod.podId}) with ΔT = +${targetPod.deltaTempC.toStringAsFixed(2)}°C.");
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: AppTheme.coralAlert,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 4),
+        content: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.white),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "🚨 Seawater Thermal Spike Detected (+2.88°C)! Workload migration evaluated.",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _migrateTask(String taskId, PodScoreRecord targetPod) {
+    setState(() {
+      final task = _activeTasks.firstWhere((t) => t.taskId == taskId);
+      final now = DateTime.now().toUtc();
+      final oldPodId = task.assignedPodId;
+      final oldPodName = task.assignedPodName;
+
+      final tempBefore = task.currentPodTempC;
+      final deltaTempBefore = task.currentWaterDeltaTempC;
+
+      task.status = "MIGRATED_RUNNING";
+      task.isMigrated = true;
+      task.migratedFromPodId = oldPodId;
+      task.migratedFromPodName = oldPodName;
+      task.assignedPodId = targetPod.podId;
+      task.assignedPodName = targetPod.podName;
+      task.migrationTimestamp = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')} UTC";
+      task.migrationReason = "Thermal surge & Seawater ΔT budget breach on $oldPodName (+${deltaTempBefore.toStringAsFixed(2)}°C). Migrated to high-flow convective pod.";
+
+      // Restore safe thermal metrics on target pod
+      task.currentWaterDeltaTempC = targetPod.deltaTempC;
+      task.currentPodTempC = targetPod.internalPodTempC;
+      task.ambientWaterTempC = (targetPod.localWaterTempC - targetPod.deltaTempC).clamp(0.0, 35.0);
+      task.currentConvectiveHWm2k = targetPod.convectiveHWm2k;
+      task.thermalFootprintScore = targetPod.normThermal;
+      task.environmentalRiskScore = targetPod.normRisk;
+      task.isThermalAlert = false;
+      task.thermalAlertReason = null;
+      task.suggestedTargetPod = null;
+
+      task.migrationHistory.add(
+        MigrationRecord(
+          timestamp: now,
+          fromPodId: oldPodId,
+          fromPodName: oldPodName,
+          toPodId: targetPod.podId,
+          toPodName: targetPod.podName,
+          reason: task.migrationReason!,
+          tempBefore: tempBefore,
+          tempAfter: targetPod.internalPodTempC,
+          deltaTempBefore: deltaTempBefore,
+          deltaTempAfter: targetPod.deltaTempC,
+        ),
+      );
+
+      task.telemetryHistory.add(
+        TelemetryDataPoint(
+          timestamp: now,
+          deltaTempC: targetPod.deltaTempC,
+          internalPodTempC: targetPod.internalPodTempC,
+          ambientTempC: task.ambientWaterTempC,
+          convectiveHWm2k: targetPod.convectiveHWm2k,
+          isThermalBreached: false,
+        ),
+      );
+
+      final dropPct = (((deltaTempBefore - targetPod.deltaTempC) / deltaTempBefore) * 100).toInt();
+      task.logs.add("[${now.toIso8601String()}] 🔄 Live container state checkpointed (RAM: ${task.ramAllocated.toInt()} GB). Transmitting over optical mesh...");
+      task.logs.add("[${now.toIso8601String()}] 🚀 Workload successfully migrated to ${targetPod.podName} (${targetPod.podId}).");
+      task.logs.add("[${now.toIso8601String()}] ❄️ Seawater ΔT dropped from +${deltaTempBefore.toStringAsFixed(2)}°C to +${targetPod.deltaTempC.toStringAsFixed(2)}°C (-$dropPct% cooler).");
+      task.logs.add("[${now.toIso8601String()}] 🌿 Thermal compliance restored. Workload resuming execution seamlessly at ${task.progressPct.toInt()}%.");
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppTheme.marineEmerald,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "✅ Live Migration Complete: Resumed on ${targetPod.podName}!",
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -666,7 +853,13 @@ class _MainShellState extends State<MainShell> {
       case 4:
         return ExecutionTab(
           activeTasks: _activeTasks,
+          pods: _pods,
+          oceanConditions: _oceanConditions,
+          weights: _weights,
+          constraints: _constraints,
           onAdvanceProgress: _advanceTaskProgress,
+          onTriggerThermalSpike: _triggerTaskThermalSpike,
+          onExecuteMigration: _migrateTask,
         );
       case 5:
         return DataQualityTab(

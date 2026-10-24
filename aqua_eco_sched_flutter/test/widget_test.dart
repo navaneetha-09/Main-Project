@@ -162,5 +162,50 @@ void main() {
     // Verify workload profile header updated to 31 Verified workloads
     expect(find.text('Workload Profile (31 Verified):'), findsOneWidget);
   });
+
+  testWidgets('Continuous monitoring detects seawater thermal spike and executes live workload migration', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(const AquaEcoSchedApp());
+    await tester.pumpAndSettle();
+
+    // 1. Launch simulation from scheduler
+    await tester.tap(find.text('Launch Simulation').first);
+    await tester.pumpAndSettle();
+
+    // 2. Verify we are in Mission Execution with telemetry stream
+    expect(find.text('Seawater Telemetry'), findsOneWidget);
+    expect(find.text('● THERMALLY SAFE'), findsOneWidget);
+    expect(find.text('Simulate Thermal Spike (+6°C)'), findsOneWidget);
+
+    // 3. Trigger thermal spike
+    await tester.tap(find.text('Simulate Thermal Spike (+6°C)'));
+    await tester.pumpAndSettle();
+
+    // 4. Verify thermal alert is raised
+    expect(find.text('THERMAL ALERT'), findsOneWidget);
+    expect(find.text('⚠️ THERMAL EXCEEDED'), findsOneWidget);
+    expect(find.textContaining('CRITICAL THERMAL EVENT'), findsOneWidget);
+
+    // 5. Verify live migration button is available
+    final migrateButton = find.textContaining('Execute Live Migration to');
+    expect(migrateButton, findsOneWidget);
+
+    // 6. Ensure visible and tap live migration
+    await tester.ensureVisible(migrateButton);
+    await tester.tap(migrateButton);
+    await tester.pumpAndSettle();
+
+    // 7. Verify task has been migrated and is active on cooler pod
+    expect(find.text('MIGRATED & ACTIVE'), findsOneWidget);
+    expect(find.text('● THERMALLY SAFE'), findsOneWidget);
+    expect(find.textContaining('Live Migration Executed'), findsOneWidget);
+  });
 }
+
 

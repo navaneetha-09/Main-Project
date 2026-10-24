@@ -556,6 +556,30 @@ class SchedulerEngine {
     }
   }
 
+  /// Evaluates and identifies the best alternative subsea pod for dynamic workload migration
+  /// when the current executing pod experiences thermal degradation or ocean surge.
+  static PodScoreRecord? findMigrationTarget({
+    required Workload workload,
+    required String currentPodId,
+    required List<PodResource> pods,
+    required List<OceanCondition> oceanConditions,
+    required SchedulingWeights weights,
+    required RiskBudgetConstraints constraints,
+  }) {
+    final candidatePods = pods.where((p) => p.id != currentPodId && p.isOperational).toList();
+    if (candidatePods.isEmpty) return null;
+
+    final decision = schedule(
+      workload: workload,
+      pods: candidatePods,
+      oceanConditions: oceanConditions,
+      weights: weights,
+      constraints: constraints,
+    );
+
+    return decision.selectedPod;
+  }
+
   static List<double> _minMaxNormalize(List<double> values) {
     if (values.isEmpty) return [];
     double vMin = values.first;
@@ -570,3 +594,5 @@ class SchedulerEngine {
     return values.map((v) => (v - vMin) / (vMax - vMin)).toList();
   }
 }
+
+
